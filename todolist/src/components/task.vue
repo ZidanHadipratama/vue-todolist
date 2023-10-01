@@ -3,7 +3,8 @@
     'border-red': task.priority === 'high',
     'border-yellow': task.priority === 'med',
     'border-green': task.priority === 'low',
-  }">
+  }" ref="taskComponent">
+    <taskDetail :task="task" v-show="taskDetail" @tutup="tutup" class="detail"/>
     <div class="wrap-atas flex column" :class="{'low-opacity': task.status}">
       <div class="atas flex ycenter">
         <h2 :class="{ 'strike-through': task.status }">{{ task.title }}</h2>
@@ -33,18 +34,18 @@
     >
       Done
     </button>
-    <taskEdit @ngedit="ngedit" @ngapus="ngapus" v-if="editMenu"/>
   </div>
 </template>
 
 <script>
 import taskEdit from '@/components/taskEdit.vue';
+import taskDetail from '@/components/taskDetail.vue';
 
 export default {
   data() {
     return {
       isHovered: false,
-      editMenu: false,
+      taskDetail: false,
     };
   },
   props: {
@@ -63,23 +64,32 @@ export default {
         this.editMenu=false
         this.$emit('ngapus', this.task.id)
     },
-    closeEditMenuOnClickOutside(event) {
-      // Check if the click event target is not within the ".menu" element
-      if (!event.target.closest('.menu')) {
-        this.editMenu = false;
+    openTaskDetail(event) {
+      // Get the task component's root element
+      const taskComponentElement = this.$refs.taskComponent;
+      // Get the taskDetail element
+      const taskDetailElement = taskComponentElement.querySelector('.detail');
+
+      // Check if the click event target is not within the ".detail" element and is within the "wrapp" element
+      if (taskComponentElement.contains(event.target) && !taskDetailElement.contains(event.target)) {
+        this.taskDetail = true;
       }
     },
+    tutup(){
+        this.taskDetail=false;
+    }
   },
   components: {
     taskEdit,
+    taskDetail
   },
   mounted() {
     // Add a click event listener to the document to handle clicks outside of ".menu"
-    document.addEventListener('click', this.closeEditMenuOnClickOutside);
+    document.addEventListener('click', this.openTaskDetail);
   },
   beforeUnmount() {
     // Remove the click event listener when the component is about to be destroyed
-    document.removeEventListener('click', this.closeEditMenuOnClickOutside);
+    document.removeEventListener('click', this.openTaskDetail);
   },
 };
 </script>
@@ -91,7 +101,6 @@ export default {
   width: 400px;
   height: 200px;
   justify-content: space-between;
-  position: relative;
 
   .wrap-atas {
     gap: 15px;
