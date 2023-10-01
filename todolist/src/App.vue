@@ -1,8 +1,4 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
   <router-view/>
 </template>
 
@@ -15,27 +11,11 @@
   --blue: rgba(55, 68, 189, 1);
 }
 
-#app {
+*{
+  box-sizing: border-box;
   font-family: 'Montserrat', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
   padding: 0;
   margin: 0;
-}
-
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 
 
@@ -102,22 +82,26 @@ nav {
 
 .bg-red{
   background-color: var(--red);
-  border:2px solid var(--putih);
+  border:2px solid var(--red);
+  color: var(--putih)
 }
 
 .bg-green{
   background-color: var(--green);
-  border:2px solid var(--putih);
+  border:2px solid var(--green);
+  color: var(--putih);
 }
 
 .bg-yellow{
   background-color: var(--yellow);
-  border:2px solid var(--putih);
+  border:2px solid var(--yellow);
+  color: var(--putih);
 }
 
 .bg-blue{
   background-color: var(--blue);
-  border:2px solid var(--putih);
+  border:2px solid var(--blue);
+  color: var(--putih);
 }
 
 .border-red{
@@ -148,7 +132,7 @@ nav {
 }
 
 .button:hover{
-  scale: 1.2;
+  scale: 1.1;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
 }
 </style>
