@@ -18,7 +18,7 @@
 
 <style lang="scss" scoped>
 .wrap{
-    position: sticky;
+    position:fixed;
     gap: 40px;
     height: 100vh;
     padding: 40px 8px;

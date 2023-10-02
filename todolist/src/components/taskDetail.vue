@@ -42,7 +42,7 @@
                 this.$emit('tutup')
             },
             delData(){
-                localStorage.removeItem(`task_${this.task.id}`)
+                this.$emit('ngapus')
                 this.$emit('tutup')
             },
             doneData(){
@@ -76,6 +76,7 @@
     height: 100vh;
     top: 0;
     left: 0;
+    z-index: 99
 }
 .wrap{
     position: absolute;

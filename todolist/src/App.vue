@@ -8,7 +8,7 @@
   --green: rgb(97, 195, 84);
   --yellow: rgb(245, 189, 80);
   --putih: #ffffff;
-  --blue: rgba(55, 68, 189, 1);
+  --blue: rgba(55, 68, 189, 1); 
 }
 
 *{

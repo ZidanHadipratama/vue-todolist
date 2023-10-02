@@ -4,7 +4,7 @@
     'border-yellow': task.priority === 'med',
     'border-green': task.priority === 'low',
   }" ref="taskComponent">
-    <taskDetail :task="task" v-show="taskDetail" @tutup="tutup" class="detail"/>
+    <taskDetail :task="task" v-show="taskDetail" @tutup="tutup" class="detail" @ngapus="ngapus"/>
     <div class="wrap-atas flex column" :class="{'low-opacity': task.status}">
       <div class="atas flex ycenter">
         <h2 :class="{ 'strike-through': task.status }">{{ task.title }}</h2>
@@ -18,7 +18,7 @@
       <div class="line extreme-round"></div>
     </div>
     <button
-      class="button extreme-round"
+      class="button extreme-round done"
       :class="{
         'border-red': task.priority === 'high' && !isHovered,
         'border-yellow': task.priority === 'med' && !isHovered,
@@ -69,9 +69,10 @@ export default {
       const taskComponentElement = this.$refs.taskComponent;
       // Get the taskDetail element
       const taskDetailElement = taskComponentElement.querySelector('.detail');
+      const taskDoneElement = taskComponentElement.querySelector('.done');
 
       // Check if the click event target is not within the ".detail" element and is within the "wrapp" element
-      if (taskComponentElement.contains(event.target) && !taskDetailElement.contains(event.target)) {
+      if (taskComponentElement.contains(event.target) && !taskDetailElement.contains(event.target) && !taskDoneElement.contains(event.target)) {
         this.taskDetail = true;
       }
     },
