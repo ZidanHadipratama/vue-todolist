@@ -22,10 +22,9 @@
                 </div>
             </div>
             <div class="buton flex xcenter yecenter save">
-                <button class="extreme-round create basic-shadow button bg-blue text-putih" @click="saveData()">Create</button>
+                <router-link to="/"><button class="extreme-round create basic-shadow button bg-blue text-putih" @click="saveData()">Create</button></router-link>
                 <button class="extreme-round create basic-shadow button bg-red text-putih" @click="delData()">Delete</button>
-                <button class="extreme-round create basic-shadow button bg-green text-putih" @click="doneData()" v-if="this.task.status===false">Done</button>
-                <button class="extreme-round create basic-shadow button bg-green text-putih" @click="unDone()" v-if="this.task.status===true">unDone</button>
+                <button class="extreme-round create basic-shadow button bg-green text-putih" @click="doneData()">Done</button>
             </div>
         </div>
     </div>
@@ -33,8 +32,10 @@
 
 <script>
     export default {
-        props: {
-            task: Object
+        data() {
+            return {
+                task: Object
+            }
         },
         methods: {
             saveData() {
@@ -42,13 +43,13 @@
                 this.$emit('tutup')
             },
             delData(){
+                localStorage.removeItem(`task_${this.task.id}`)
                 this.$emit('ngapus')
                 this.$emit('tutup')
             },
             doneData(){
                 this.task.status=true
                 localStorage.setItem(`task_${this.task.id}`, JSON.stringify(this.task));
-                console.log(this.task)
                 this.$emit('tutup')
             },
             closeEditMenuOnClickOutside(event) {
@@ -57,12 +58,6 @@
                     this.$emit('tutup')
                 }
             },
-            unDone(){
-                this.task.status=false
-                localStorage.setItem(`task_${this.task.id}`, JSON.stringify(this.task));
-                console.log(this.task)
-                this.$emit('tutup')
-            }
         },
         mounted() {
             // Add a click event listener to the document to handle clicks outside of ".menu"
@@ -72,6 +67,15 @@
             // Remove the click event listener when the component is about to be destroyed
             document.removeEventListener('click', this.closeEditMenuOnClickOutside);
         },
+        created(){
+            const param=this.$route.params.taskId
+            if (JSON.parse(localStorage.getItem(`task_${param}`))){
+                this.task = JSON.parse(localStorage.getItem(`task_${param}`));
+                console.log(this.task)
+            }else{
+                this.$router.push("/error")
+            }
+        }
     }
 </script>
 

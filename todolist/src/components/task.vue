@@ -5,12 +5,9 @@
     'border-green': task.priority === 'low',
   }" ref="taskComponent">
     <taskDetail :task="task" v-show="taskDetail" @tutup="tutup" class="detail" @ngapus="ngapus"/>
-    <div class="wrap-atas flex column" :class="{'low-opacity': task.status}">
+    <div class="wrap-atas flex column" :class="{'low-opacity': this.task.status}">
       <div class="atas flex ycenter">
-        <h2 :class="{ 'strike-through': task.status }">{{ task.title }}</h2>
-        <div class="menu" @click="this.editMenu=true">
-            edit
-        </div>
+        <h2 :class="{ 'strike-through': this.task.status }">{{ task.title }}</h2>
       </div>
       <div class="desc">
         <p>{{ task.desc }}</p>
@@ -49,13 +46,11 @@ export default {
     };
   },
   props: {
-    task: Object, // Accept a single task as a prop
+    task: Object,
   },
   methods: {
     markAsDone() {
-      // Emit an event to notify the parent component to update the status of this task
       this.$emit('mark-as-done', this.task.id);
-      console.log("Done")
     },
     ngedit(){
         this.editMenu=false
@@ -65,13 +60,11 @@ export default {
         this.$emit('ngapus', this.task.id)
     },
     openTaskDetail(event) {
-      // Get the task component's root element
       const taskComponentElement = this.$refs.taskComponent;
-      // Get the taskDetail element
+
       const taskDetailElement = taskComponentElement.querySelector('.detail');
       const taskDoneElement = taskComponentElement.querySelector('.done');
 
-      // Check if the click event target is not within the ".detail" element and is within the "wrapp" element
       if (taskComponentElement.contains(event.target) && !taskDetailElement.contains(event.target) && !taskDoneElement.contains(event.target)) {
         this.taskDetail = true;
       }
@@ -85,11 +78,10 @@ export default {
     taskDetail
   },
   mounted() {
-    // Add a click event listener to the document to handle clicks outside of ".menu"
     document.addEventListener('click', this.openTaskDetail);
+    console.log(this.task)
   },
   beforeUnmount() {
-    // Remove the click event listener when the component is about to be destroyed
     document.removeEventListener('click', this.openTaskDetail);
   },
 };

@@ -1,6 +1,19 @@
 <template>
-  <router-view/>
+  <div class="absolute">
+    <navBar/>
+  </div>
+  <router-view style="background-color: rgba(224, 234, 255, 1); width: 100vw; height: 100vh"/>
 </template>
+
+<script>
+import navBar from '@/components/navBar-abt.vue';
+
+export default {
+  components: {
+    navBar
+  },
+};
+</script>
 
 <style lang="scss">
 :root{
@@ -16,6 +29,10 @@
   font-family: 'Montserrat', sans-serif;
   padding: 0;
   margin: 0;
+}
+
+.absolute{
+  position: absolute;
 }
 
 
