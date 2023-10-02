@@ -4,7 +4,7 @@
       <navBar @nginput="this.input=!this.input" class="masuk"/>
     </div>
     <div class="absolute" :class="{'nginput': input}">
-      <inputTask v-if="input" @done="this.input=false" class="masuk"/>
+      <inputTask v-if="input" @done="filterData(this.priority)" class="masuk"/>
     </div>
     <div class="wrappp flex column" @click="this.input=false">
       <div class="buton flex xcenter ycenter">
@@ -143,13 +143,15 @@ export default {
         }
       }
 
+      this.input=false
+
       this.taskData=this.filteredTaskData
     }
   },
   created() {
     // Retrieve form data from localStorage when the component is created
     this.retrieveFormData();
-    console.log(this.taskData)
+    // console.log(this.taskData)
   },
   mounted() {
     // Add a click event listener to the document to handle clicks outside of ".menu"

@@ -38,7 +38,6 @@
         methods: {
             saveData() {
                 localStorage.setItem(`task_${this.task.id}`, JSON.stringify(this.task));
-                console.log(localStorage)
                 this.$emit('tutup')
             },
             delData(){
@@ -51,11 +50,11 @@
                 this.$emit('tutup')
             },
             closeEditMenuOnClickOutside(event) {
-            // Check if the click event target is not within the ".menu" element
-            if (!event.target.closest('.wrap')) {
-                this.$emit('tutup')
-            }
-    },
+                // Check if the click event target is not within the ".menu" element
+                if (!event.target.closest('.wrap')) {
+                    this.$emit('tutup')
+                }
+            },
         },
         mounted() {
             // Add a click event listener to the document to handle clicks outside of ".menu"
