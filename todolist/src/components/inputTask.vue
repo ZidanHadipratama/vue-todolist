@@ -13,7 +13,7 @@
             <div class="flex priority column">
                 <h4>Priority</h4>
                 <div class="buton flex xcenter ycenter">
-                    <div class="extreme-round high basic-shadow button" @click="this.task.priority='high'" :class="{'bg-red':this.task.priority==='high', 'border-red':this.task.priority!=='high'}">High</div>
+                    <div class="extreme-round basic-shadow button" @click="this.task.priority='high'" :class="{'bg-red':this.task.priority==='high', 'border-red':this.task.priority!=='high'}">High</div>
                     <div class="extreme-round medium basic-shadow button" @click="this.task.priority='med'" :class="{'bg-yellow':this.task.priority==='med', 'border-yellow':this.task.priority!=='med'}">Medium</div>
                     <div class="extreme-round low basic-shadow button" @click="this.task.priority='low'" :class="{'bg-green':this.task.priority==='low', 'border-green':this.task.priority!=='low'}">Low</div>
                 </div>
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+    import axios from 'axios';
+
     export default {
         data() {
             return {
@@ -34,28 +36,59 @@
                     priority: null,
                     status: false
                 },
+                Category: []
             }
         },
         methods: {
             saveData() {
-                let taskId = 0;
+                // Create an object with your task data
+                const taskData = {
+                    name: this.task.title,
+                    description: this.task.desc,
+                    priority: this.task.priority,
+                    status: this.task.status,
+                };
 
-                if (localStorage.length > 0) {
-                    taskId = localStorage.length + 1;
-                }
+                console.log(taskData)
 
-                this.task.id = taskId;
-                localStorage.setItem(`task_${taskId}`, JSON.stringify(this.task));
-                console.log(localStorage);
+                // Make a POST request to PayloadCMS to add the task data
+                axios.post('http://localhost:3000/api/Todo', taskData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    // Handle the response, e.g., reset the form fields
+                    this.task.title = '';
+                    this.task.desc = '';
+                    this.task.priority = '';
+                    this.task.status = false;
 
-                // Reset the form fields
-                this.task.title = null;
-                this.task.desc = null;
-                this.task.priority = null;
-                this.task.status = false;
+                    console.log(taskData)
 
-                this.$emit('done')
+                    // Emit an event to notify parent components (if needed)
+                    this.$emit('done');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             }
+        },
+        created() {
+            axios.get('http://localhost:3000/api/Category/') // Sesuaikan dengan URL endpoint yang sesuai
+            .then(response => {
+                this.categories = response.data.docs;
+            })
+            .catch(error => {
+                console.error("Error fetching categories:", error);
+            });
+            axios.get('http://localhost:3000/api/Todo/')
+            .then(response => {
+                this.todos = response.data;
+            })
+            .catch(error => {
+                console.error("Error fetching todos:", error);
+            });
         }
     }
 </script>
