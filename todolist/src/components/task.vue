@@ -4,13 +4,13 @@
     'border-yellow': task.priority === 'med',
     'border-green': task.priority === 'low',
   }" ref="taskComponent">
-    <taskDetail :task="task" v-show="taskDetail" @tutup="tutup" class="detail" @ngapus="ngapus"/>
-    <div class="wrap-atas flex column" :class="{'low-opacity': this.task.status}">
+    <taskDetail :task="task" v-show="taskDetail" @tutup="tutup" class="detail" @ngapus="ngapus" @done="markAsDone"/>
+    <div class="wrap-atas flex column" :class="{'low-opacity': this.status }">
       <div class="atas flex ycenter">
-        <h2 :class="{ 'strike-through': this.task.status }">{{ task.title }}</h2>
+        <h2 :class="{ 'strike-through': this.status }">{{ task.name }}</h2>
       </div>
       <div class="desc">
-        <p>{{ task.desc }}</p>
+        <p>{{ task.description }}</p>
       </div>
       <div class="line extreme-round"></div>
     </div>
@@ -23,7 +23,7 @@
         'bg-red': task.priority === 'high' && isHovered,
         'bg-yellow': task.priority === 'med' && isHovered,
         'bg-green': task.priority === 'low' && isHovered,
-        'low-opacity': task.status
+        'low-opacity': this.status
       }"
       @mouseenter="isHovered = true"
       @mouseleave="isHovered = false"
@@ -37,12 +37,14 @@
 <script>
 import taskEdit from '@/components/taskEdit.vue';
 import taskDetail from '@/components/taskDetail.vue';
+import axios from 'axios';
 
 export default {
   data() {
     return {
       isHovered: false,
       taskDetail: false,
+      status: null
     };
   },
   props: {
@@ -50,7 +52,17 @@ export default {
   },
   methods: {
     markAsDone() {
-      this.$emit('mark-as-done', this.task.id);
+      this.task.status=true
+      axios.put(`http://localhost:3000/api/Todo/${this.task.id}`, this.task)
+      .then(response => {
+          console.log('Task updated:', response.data);
+      })
+      .catch(error => {
+          console.error('Error updating task:', error);
+      });
+      console.log(this.task)
+      this.status=true
+      console.log(this.status)
     },
     ngedit(){
         this.editMenu=false
@@ -79,7 +91,11 @@ export default {
   },
   mounted() {
     document.addEventListener('click', this.openTaskDetail);
-    console.log(this.task)
+    if (this.task.status == "false"){
+      this.status=false
+    }else{
+      this.status=true
+    }
   },
   beforeUnmount() {
     document.removeEventListener('click', this.openTaskDetail);

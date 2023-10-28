@@ -31,6 +31,7 @@
 import task from '@/components/task.vue';
 import inputTask from '@/components/inputTask.vue';
 import navBar from '@/components/navBar.vue';
+import axios from 'axios';
 
 export default {
   components: {
@@ -48,7 +49,8 @@ export default {
   computed: {
     sortingTaskData() {
       // Sort the taskData array based on priority and status
-      return this.taskData.sort((a, b) => {
+      const copyOfTaskData = [...this.taskData];
+      return copyOfTaskData.sort((a, b) => {
         // Compare priority first
         if (a.priority === "high" && b.priority !== "high") return -1;
         if (a.priority !== "high" && b.priority === "high") return 1;
@@ -76,50 +78,50 @@ export default {
   methods:{
     retrieveFormData() {
       // Iterate through localStorage keys
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-
-        // Check if the key matches the pattern "formData_"
-        if (key.startsWith('task_')) {
-          // Parse and add the data to the formDataList array
-          const formData = JSON.parse(localStorage.getItem(key));
-          this.taskData.push(formData);
-        }
-      }
+      axios.get('http://localhost:3000/api/Todo')
+        .then(response => {
+          // Assign the fetched data to the todoList array
+          this.taskData = response.data.docs;
+          console.log(this.taskData[0])
+          console.log("status: ")
+          console.log(this.taskData[0].status)
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+      console.log("jalan gk?")
     },
     markTaskAsDone(taskId) {
-      // Find the task with the matching ID and update its status
+    // Find the task with the matching ID
       const taskToUpdate = this.taskData.find((task) => task.id === taskId);
+
+      // Check if the task exists
       if (taskToUpdate) {
+        // Update the task's status to true
         taskToUpdate.status = true;
-      }
-      localStorage.setItem(`task_${taskToUpdate.id}`, JSON.stringify(taskToUpdate));
-      
 
+        // Send a PUT request to update the task in your Payload CMS
+        axios.put(`http://localhost:3000/api/Todo/${taskToUpdate.id}`, taskToUpdate)
+          .then(response => {
+            console.log('Task updated:', response.data);
+          })
+          .catch(error => {
+            console.error('Error updating task:', error);
+          });
+      }
     },
-    ngapus(taskId){
-      const taskToUpdate = this.taskData.find((task) => task.id === taskId);
-      if (taskToUpdate){
-        localStorage.removeItem(`task_${taskId}`);
-        this.taskData.pop(`task_${taskId}`)
-      }
+    ngapus(taskId) {
+      // Send a DELETE request to remove the task from your Payload CMS
+      axios.delete(`http://localhost:3000/api/Todo/${taskId}`)
+        .then(response => {
+          console.log('Task deleted:', response.data);
 
-      this.taskData=[]
-
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-
-        // Check if the key matches the pattern "formData_"
-        if (key.startsWith('task_')) {
-          // Parse and add the data to the formDataList array
-          const formData = JSON.parse(localStorage.getItem(key));
-          this.taskData.push(formData);
-        }
-      }
-
-      this.taskData=this.sortingTaskData
-
-      this.$forceUpdate()
+          // Update your local taskData array to remove the deleted task
+          this.taskData = this.taskData.filter(task => task.id !== taskId);
+        })
+        .catch(error => {
+          console.error('Error deleting task:', error);
+        });
     },
     closeEditMenuOnClickOutside(event) {
       // Check if the click event target is not within the ".menu" element

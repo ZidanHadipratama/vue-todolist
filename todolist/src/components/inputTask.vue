@@ -34,7 +34,6 @@
                     title: null,
                     desc: null,
                     priority: null,
-                    status: false
                 },
                 Category: []
             }
@@ -46,7 +45,7 @@
                     name: this.task.title,
                     description: this.task.desc,
                     priority: this.task.priority,
-                    status: this.task.status,
+                    status: false
                 };
 
                 console.log(taskData)
@@ -62,7 +61,6 @@
                     this.task.title = '';
                     this.task.desc = '';
                     this.task.priority = '';
-                    this.task.status = false;
 
                     console.log(taskData)
 

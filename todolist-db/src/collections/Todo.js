@@ -27,6 +27,7 @@ const Todo = {
         name: 'status',
         label: 'Status',
         type: 'text',
+        defaultValue: "false"
       },
       {
         name: 'priority',

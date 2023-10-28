@@ -7,11 +7,11 @@
         }">
             <div class="title">
                 <p>Judul Tugas</p>
-                <input v-model="task.title" class="input-title">
+                <input v-model="task.name" class="input-title">
             </div>
             <div class="desc">
                 <p>Deskripsi Tugas</p>
-                <textarea v-model="task.desc" class="input-desc"></textarea>
+                <textarea v-model="task.description" class="input-desc"></textarea>
             </div>
             <div class="bnyk flex column">
                 <h5>Priority</h5>
@@ -24,21 +24,33 @@
             <div class="buton flex xcenter yecenter save">
                 <button class="extreme-round create basic-shadow button bg-blue text-putih" @click="saveData()">Create</button>
                 <button class="extreme-round create basic-shadow button bg-red text-putih" @click="delData()">Delete</button>
-                <button class="extreme-round create basic-shadow button bg-green text-putih" @click="doneData()" v-if="this.task.status===false">Done</button>
-                <button class="extreme-round create basic-shadow button bg-green text-putih" @click="unDone()" v-if="this.task.status===true">unDone</button>
+                <button class="extreme-round create basic-shadow button bg-green text-putih" @click="doneData()" v-if="this.status===false">Done</button>
+                <button class="extreme-round create basic-shadow button bg-green text-putih" @click="unDone()" v-if="this.status===true">unDone</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
     export default {
+        data() {
+            return {
+                status: null
+            }
+        },
         props: {
             task: Object
         },
         methods: {
             saveData() {
-                localStorage.setItem(`task_${this.task.id}`, JSON.stringify(this.task));
+                axios.put(`http://localhost:3000/api/Todo/${this.task.id}`, this.task)
+                .then(response => {
+                    console.log('Task updated:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error updating task:', error);
+                });
                 this.$emit('tutup')
             },
             delData(){
@@ -47,8 +59,16 @@
             },
             doneData(){
                 this.task.status=true
-                localStorage.setItem(`task_${this.task.id}`, JSON.stringify(this.task));
+                axios.put(`http://localhost:3000/api/Todo/${this.task.id}`, this.task)
+                .then(response => {
+                    console.log('Task updated:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error updating task:', error);
+                });
                 console.log(this.task)
+                this.status=true
+                this.$emit('done')
                 this.$emit('tutup')
             },
             closeEditMenuOnClickOutside(event) {
@@ -59,14 +79,26 @@
             },
             unDone(){
                 this.task.status=false
-                localStorage.setItem(`task_${this.task.id}`, JSON.stringify(this.task));
+                axios.put(`http://localhost:3000/api/Todo/${this.task.id}`, this.task)
+                .then(response => {
+                    console.log('Task updated:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error updating task:', error);
+                });
                 console.log(this.task)
+                this.status=false
                 this.$emit('tutup')
             }
         },
         mounted() {
             // Add a click event listener to the document to handle clicks outside of ".menu"
             document.addEventListener('click', this.closeEditMenuOnClickOutside);
+                if (this.task.status == "false"){
+            this.status=false
+            }else{
+                this.status=true
+            }
         },
         beforeUnmount() {
             // Remove the click event listener when the component is about to be destroyed
